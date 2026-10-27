@@ -1,152 +1,118 @@
 ---
 name: ub-mode
-description: >
-  Follow the reduced principles when writing or changing code. Every change
-  follows First Make it Work, then Then Make it Right, then Follow Practice.
-  Use when the user runs /ub-mode or asks for the reduced principles.
+description: Follow the reduced Make it Work, Make it Right, Practice principles for code changes. Use when the user invokes ub-mode or asks for these principles; use available quality tools without making them prerequisites.
 ---
 
 # ub-mode
 
-Every time you are asked to make a change follow:
-* First Make it Work.
-* Then Make it Right.
-* Follow Practice
+Apply these principles to code changes in any language. Follow the user's scope and repository rules. The workflow works with project tests and code review alone. Optional tools provide measured evidence; never invent a metric when a tool or coverage report is missing.
 
-# First Make it Work
+## First Make it Work
 
-## Laziness Protocol
+### Laziness Protocol
 
-* One decision lives in one place.
-* Ship the smallest edit that solves the problem.
+- Keep each decision in one place and make the smallest useful change.
 
-## Foundational Thinking
+### Foundational Thinking
 
-* Get the data shape right before you write the logic.
-* Do first whatever helps every later phase.
-* If a concurrent writer would matter, do not share state.
+- Settle the data shape before implementing behavior. Do early work that makes later steps easier.
+- If concurrent writers could interfere, give them separate state or one explicit owner.
 
-## TDD
+### TDD
 
-* Write the failing test before you change the code.
-* See it fail for the reason you expect.
-* Make the smallest change that makes it pass.
-* If an honest test is impractical, do not write a bad one.
+- Where practical, write a behavior test that fails for the expected reason, make it pass, then improve the design.
+- Skip a test that would only repeat the implementation or could pass with no useful behavior.
 
-## Redesign From First Principles
+### Redesign From First Principles
 
-* Do not bolt a new requirement onto the old design.
-* Ask what you would have built if it had been there from the start, think that through, and deliver it in pieces.
+- For a new requirement, consider the design you would choose with that requirement present from the start. Deliver the change in small pieces.
 
-## Attack the Premise
+### Attack the Premise
 
-* When two fixes that share one premise fail the same gate, write that premise in one sentence and count which actors hold the imbalance.
-* Remove the assignment.
-* Do not start another fix until you have done that.
+- If two fixes based on the same assumption fail, state that assumption and check who or what actually owns the responsibility before trying another fix.
 
-## Subtract Before You Add
+### Subtract Before You Add
 
-* Take complexity out before you add anything.
+- Remove unnecessary branches, state, or duplication before introducing more machinery.
 
-## Outcome-Oriented Execution
+### Outcome-Oriented Execution
 
-* Aim at the end state you can check.
-* A break in the middle is allowed when you planned it and can undo it.
+- Define a result you can verify. Keep intermediate steps reversible when they temporarily break behavior.
 
-## Build the Lever
+### Build the Lever
 
-* If the work is not obvious at a glance, build the tool that does it.
-* Do one unit by hand, then make the tool match that unit.
+- If a repeated task is unclear, perform one representative case first, then make a helper or script reproduce it.
 
-## Architecture
+### Architecture
 
-### Model the Domain
+#### Model the Domain
 
-* Put the domain in a structure that makes the illegal states impossible.
-* Maintain a glossary of domain terms.
-* If the code is already clear and local, leave it.
+- Model domain values so invalid states are hard to express; keep a small glossary only when terms need clarification.
 
-### Boundary Discipline
+#### Boundary Discipline
 
-* Check the data where it enters.
-* Inside, trust it.
-* Keep the business logic in a pure function.
+- Validate outside data once at the boundary. Keep core calculations separate from I/O.
 
-### Type System Discipline
+#### Type System Discipline
 
-* Make the illegal value impossible to write.
-* Parse outside data once, where it comes in.
-* Do not silence the compiler.
+- Use types to represent validated values and make invalid values hard to construct. Do not silence type errors without fixing their cause.
 
-### Make Operations Idempotent
+#### Make Operations Idempotent
 
-* Running it twice, or running it after a crash halfway through, ends in the same state.
+- Make retryable operations end in the same state after repetition or interruption.
 
-### Separate Before Serializing Shared State
+#### Separate Before Serializing Shared State
 
-* If they do not need the same mutable thing, give each its own.
-* If they do, allow one writer, and enforce that in the structure.
+- Share mutable state only when participants genuinely need the same state, and give it one writer.
 
-# Then Make it Right
+## Then Make it Right
 
-## Fix Root Causes
+### Fix Root Causes
 
-* Reproduce it.
-* Fix the cause.
-* A guard that only hides the crash is not a fix.
+- Reproduce a failure and correct its cause. A guard that merely hides the symptom is insufficient.
 
-## Sequence work into verifiable units
+### Sequence Work into Verifiable Units
 
-* Finish one small unit and check it.
-* Then start the next.
+- Complete and check one small unit before beginning the next.
 
-## Test Behavior, Not Implementation
+### Test Behavior, Not Implementation
 
-* The test calls the code the way its user does and checks the result that user would see.
-* If the test would still pass when every function returned nothing, throw it out.
+- Call the code as its user would and assert an observable result. Reject a test that would still pass if the implementation did nothing useful.
 
-## Crapper
+### Crapper
 
-* Use the crapper tool
-* Reduce each function under  CRAP 10 by splitting it, by testing it, or both.
-* Consider whether case statements are worth reducing.
+- Review changed functions for complexity and test coverage. In a PHP project where `command -v ub-php` succeeds, run project tests first, then `ub-php check --changed --format json`. Use a full check when project-wide evidence is needed.
+- A known CRAP score must stay below 10 by simplifying code, improving tests, or both. Missing Clover coverage is unknown, not 0%. Without a measurement tool, review branching manually and report that CRAP was not measured.
 
-## Dryer
+### Dryer
 
-* Use the dryer tool to eliminate duplication that rank 0.8 or above.
+- When `ub-php` is available for PHP, review `ub-php dry --changed --threshold 0.8`. Candidates are warnings: compare meaning before extracting shared code.
+- Without a duplication tool, inspect changed code for repeated structure and describe findings without a similarity score.
 
-## Mutator
+### Mutator
 
-* Use the mutator tool
-* Cover the uncovered.
-* Kill the survivors.
-* Delete dead code.
+- If the project has a suitable mutation tool, use it when the task warrants the cost. Add tests for uncovered behavior, investigate surviving mutants, and remove code shown to be dead.
+- Otherwise, examine likely test gaps manually and report mutation analysis as unavailable. The current `ub-cdmu-php` CLI does not implement mutation testing.
 
-## Refactoring
+### Refactoring and Visualization
 
-* Pin what the code does.
-* Change the structure.
-* Prove the behavior did not change.
+- Pin behavior, change structure, and rerun the same checks. Use a UML viewer when available and useful for architecture; it is not required to complete the workflow.
+- Keep quality failures distinct from tool failures: `ub-php` exit code 2 means a known CRAP threshold failure; 3 or 4 means analysis or usage failed. Do not lower thresholds to make a check pass.
 
-# Practice
+## Practice
 
-## Keep a Log
+### Keep a Log
 
-* Keep a log of every action you take and the reason you took it.
-* Report that log upon completion.
+- Record significant actions and their reasons. Report tests, measured findings, manual observations, and unavailable checks separately.
 
-## Guard the Context Window
+### Guard the Context Window
 
-* Keep the main thread small.
-* Send the bulk elsewhere, and keep the summary.
+- Keep working context focused on the current task and preserve the facts needed to continue.
 
-## Worktree Cleanup
+### Worktree Cleanup
 
-* Find what is safe to remove, confirm nothing still in use needs it, then reclaim the disk.
-* Uncommitted work waits for a decision.
+- Remove only files or worktrees confirmed safe to discard. Leave uncommitted work for its owner to decide.
 
-## Commit and Push
+### Commit and Push
 
-* Commit often, in small ordered commits.
-* Each commit says why, what changed, and how you proved it.
-* Push to the main line at the end.
+- Make focused commits according to repository rules, recording why the change was made and how it was checked. Push or publish only when authorized for that repository.
