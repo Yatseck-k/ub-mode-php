@@ -81,12 +81,12 @@ Apply these principles to code changes in any language. Follow the user's scope 
 
 ### Crapper
 
-- Review changed functions for complexity and test coverage. In a PHP project where `command -v ub-php` succeeds, run project tests first, then `ub-php check --changed --format json`. Use a full check when project-wide evidence is needed.
+- Review changed functions for complexity and test coverage. In a PHP project where `vendor/bin/ub-php` exists, run project tests first, then `vendor/bin/ub-php check --changed --format json`. Use a full check when project-wide evidence is needed. The optional analyzer is installed as a Composer dev dependency; it requires PHP 8.2+ and does not need Python or Docker. See the companion README for GitHub VCS and local path installation.
 - A known CRAP score must stay below 10 by simplifying code, improving tests, or both. Missing Clover coverage is unknown, not 0%. Without a measurement tool, review branching manually and report that CRAP was not measured.
 
 ### Dryer
 
-- When `ub-php` is available for PHP, review `ub-php dry --changed --threshold 0.8`. Candidates are warnings: compare meaning before extracting shared code.
+- When `vendor/bin/ub-php` is available for PHP, review `vendor/bin/ub-php dry --changed --threshold 0.8`. Candidates are warnings: compare meaning before extracting shared code.
 - Without a duplication tool, inspect changed code for repeated structure and describe findings without a similarity score.
 
 ### Mutator
@@ -97,7 +97,7 @@ Apply these principles to code changes in any language. Follow the user's scope 
 ### Refactoring and Visualization
 
 - Pin behavior, change structure, and rerun the same checks. Use a UML viewer when available and useful for architecture; it is not required to complete the workflow.
-- Keep quality failures distinct from tool failures: `ub-php` exit code 2 means a known CRAP threshold failure; 3 or 4 means analysis or usage failed. Do not lower thresholds to make a check pass.
+- Keep quality failures distinct from tool failures: `vendor/bin/ub-php` exit code 2 means a known CRAP threshold failure; 3 or 4 means analysis or usage failed. Do not lower thresholds to make a check pass.
 
 ## Practice
 
