@@ -79,3 +79,10 @@ UML is a static snapshot: classes, relations, current CRAP and, when valid, a mu
 ## Provenance
 
 This skill follows the three-stage structure of [unclebob/ub-mode](https://github.com/unclebob/ub-mode). Its instructions were adapted for optional tools and PHP project workflows; the original skill and its companion [Crapper](https://github.com/unclebob/crapper), [Dryer](https://github.com/unclebob/dryer), [Mutator](https://github.com/unclebob/mutator), and [UML Viewer](https://github.com/unclebob/uml-viewer) are independent upstream projects.
+
+## Related projects
+
+- [`ub-cdmu-php`](https://github.com/Yatseck-k/ub-cdmu-php) — optional Composer-based PHP analysis tools. The agent skill remains usable without it.
+- [`commit_rules`](https://github.com/Yatseck-k/commit_rules) — a separate Conventional Commits and pull-request description skill.
+
+See [Contributing](CONTRIBUTING.md) for contribution guidelines. This repository is maintained independently; the [original ub-mode](https://github.com/unclebob/ub-mode) remains credited in [Provenance](#provenance).
